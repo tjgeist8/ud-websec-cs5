@@ -34,7 +34,7 @@ def listing_new(request):
 
 @login_required
 def listing_edit(request, pk):
-    listing = get_object_or_404(Listing, pk=pk)
+    listing = get_object_or_404(Listing, pk=pk, owner=request.user)
     form = ListingForm(request.POST or None, instance=listing)
     if request.method == "POST" and form.is_valid():
         form.save()
@@ -45,7 +45,7 @@ def listing_edit(request, pk):
 @login_required
 @require_POST
 def listing_sold(request, pk):
-    listing = get_object_or_404(Listing, pk=pk)
+    listing = get_object_or_404(Listing, pk=pk, owner=request.user)
     listing.status = "sold"
     listing.save(update_fields=["status"])
     return redirect("listing_detail", pk=listing.pk)
@@ -54,7 +54,7 @@ def listing_sold(request, pk):
 @login_required
 @require_POST
 def listing_delete(request, pk):
-    listing = get_object_or_404(Listing, pk=pk)
+    listing = get_object_or_404(Listing, pk=pk, owner=request.user)
     listing.status = "removed"
     listing.save(update_fields=["status"])
     return redirect("home")
